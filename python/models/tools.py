@@ -1,8 +1,7 @@
 """
-Tool-based architecture implementation.
-Based on idris/Domain/Tools.idr specification.
+투자 분석을 위한 도구(Tool) 모음
 
-This module implements the LangChain Tool framework for investment analysis.
+LangChain Tool 프레임워크를 사용하여 투자 분석에 필요한 도구들을 정의합니다.
 """
 
 from typing import Annotated, List, Dict, Any, Optional
@@ -13,7 +12,7 @@ from dataclasses import dataclass
 
 
 # ============================================
-# Tool Definitions (corresponding to Tools.idr)
+# 투자 분석 도구 정의
 # ============================================
 
 @tool
@@ -21,8 +20,6 @@ def search_web(query: Annotated[str, "검색할 쿼리문"]) -> str:
     """
     웹에서 실시간 정보를 검색합니다.
     주식 뉴스, 시장 동향, 기업 정보 등을 찾을 때 사용하세요.
-
-    Idris spec: searchWebTool in Tools.idr
     """
     tavily = TavilySearchResults(
         max_results=3,
@@ -52,8 +49,6 @@ def get_stock_price(
 
     한국 주식: 종목코드.KS (예: 005930.KS)
     미국 주식: 티커 심볼 (예: AAPL, TSLA)
-
-    Idris spec: getStockPriceTool in Tools.idr
     """
     try:
         stock = yf.Ticker(ticker)
@@ -89,8 +84,6 @@ def calculate_moving_average(
     """
     주식의 이동평균선을 계산합니다.
     기술적 분석에 사용되며, 추세를 파악하는 데 도움이 됩니다.
-
-    Idris spec: calculateMovingAvgTool in Tools.idr
     """
     try:
         stock = yf.Ticker(ticker)
@@ -121,8 +114,6 @@ def get_company_info(ticker: Annotated[str, "주식 티커 심볼"]) -> str:
     """
     기업의 기본 정보를 조회합니다.
     시가총액, 업종, PER, PBR 등의 재무 지표를 확인할 수 있습니다.
-
-    Idris spec: getCompanyInfoTool in Tools.idr
     """
     try:
         stock = yf.Ticker(ticker)
@@ -148,7 +139,7 @@ PBR: {info.get('priceToBook', 'N/A')}
 
 
 # ============================================
-# Tool Collection (corresponding to availableTools in Tools.idr)
+# 도구 모음
 # ============================================
 
 AVAILABLE_TOOLS = [
@@ -160,24 +151,16 @@ AVAILABLE_TOOLS = [
 
 
 # ============================================
-# Tool Validation (corresponding to Tools.idr validation functions)
+# 도구 검증 함수
 # ============================================
 
 def is_valid_tool_name(tool_name: str) -> bool:
-    """
-    도구 이름이 유효한지 확인합니다.
-
-    Idris spec: isValidToolName in Tools.idr
-    """
+    """도구 이름이 유효한지 확인합니다."""
     return any(t.name == tool_name for t in AVAILABLE_TOOLS)
 
 
 def find_tool(tool_name: str) -> Optional[Any]:
-    """
-    도구 이름으로 도구를 찾습니다.
-
-    Idris spec: findTool in Tools.idr
-    """
+    """도구 이름으로 도구를 찾습니다."""
     for tool in AVAILABLE_TOOLS:
         if tool.name == tool_name:
             return tool
@@ -185,16 +168,12 @@ def find_tool(tool_name: str) -> Optional[Any]:
 
 
 # ============================================
-# Tool Execution Tracking (corresponding to ToolHistory in Tools.idr)
+# 도구 실행 추적
 # ============================================
 
 @dataclass
 class ToolExecution:
-    """
-    도구 실행 기록
-
-    Idris spec: ToolExecution in Tools.idr
-    """
+    """도구 실행 기록"""
     tool_name: str
     arguments: Dict[str, Any]
     result: str
@@ -202,31 +181,19 @@ class ToolExecution:
 
 
 class ToolHistory:
-    """
-    도구 실행 히스토리 관리
-
-    Idris spec: ToolHistory record in Tools.idr
-    """
+    """도구 실행 히스토리 관리"""
 
     def __init__(self):
         self.executions: List[ToolExecution] = []
         self.total_calls: int = 0
 
     def add_execution(self, execution: ToolExecution) -> None:
-        """
-        히스토리에 실행 추가
-
-        Idris spec: addExecution in Tools.idr
-        """
+        """히스토리에 실행 추가"""
         self.executions.append(execution)
         self.total_calls += 1
 
     def last_result(self) -> Optional[str]:
-        """
-        마지막 실행 결과 조회
-
-        Idris spec: lastResult in Tools.idr
-        """
+        """마지막 실행 결과 조회"""
         if not self.executions:
             return None
         return self.executions[-1].result
@@ -236,7 +203,7 @@ class ToolHistory:
 
 
 # ============================================
-# Tool Agent State (corresponding to ToolAgentState in Tools.idr)
+# Agent 상태
 # ============================================
 
 @dataclass
@@ -244,12 +211,9 @@ class ToolAgentState:
     """
     Tool 기반 Agent 상태
 
-    Idris spec: ToolAgentState record in Tools.idr
-
-    Invariants (verified at runtime):
-    - tool_history.total_calls <= max_tool_calls (ToolCallBound)
-    - len(tool_history.executions) == tool_history.total_calls (HistoryConsistent)
-    - all tool calls are valid (AllCallsValid)
+    불변 속성 (런타임 검증):
+    - tool_history.total_calls <= max_tool_calls
+    - len(tool_history.executions) == tool_history.total_calls
     """
     query: str
     tool_history: ToolHistory
@@ -259,11 +223,7 @@ class ToolAgentState:
 
     @classmethod
     def initial_state(cls, query: str, max_calls: int) -> 'ToolAgentState':
-        """
-        초기 상태 생성
-
-        Idris spec: initialToolState in Tools.idr
-        """
+        """초기 상태 생성"""
         return cls(
             query=query,
             tool_history=ToolHistory(),
@@ -273,26 +233,16 @@ class ToolAgentState:
         )
 
     def can_call_more_tools(self) -> bool:
-        """
-        도구를 더 호출할 수 있는지 확인
-
-        Idris spec: canCallMoreTools in Tools.idr
-        """
+        """도구를 더 호출할 수 있는지 확인"""
         return self.tool_history.total_calls < self.max_tool_calls
 
     def verify_invariants(self) -> bool:
-        """
-        런타임 불변 속성 검증
-
-        Corresponds to Idris properties:
-        - ToolCallBound
-        - HistoryConsistent
-        """
-        # ToolCallBound
+        """런타임 불변 속성 검증"""
+        # 도구 호출 횟수 제한
         if self.tool_history.total_calls > self.max_tool_calls:
             return False
 
-        # HistoryConsistent
+        # 히스토리 일관성
         if len(self.tool_history.executions) != self.tool_history.total_calls:
             return False
 
