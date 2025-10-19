@@ -70,7 +70,14 @@ def verify_notebook3() -> bool:
         (0, 'markdown', '## 환경 설정'),
         (1, 'markdown', '# Tool 기반'),
         (2, 'markdown', '## 1. 투자'),
-        (4, 'code', '# 환경 설정'),
+        (4, 'code', '# 1. 투자 분석 도구'),
+        (7, 'code', '# 1. 투자 분석 도구'),
+        (10, 'code', '# 2. ReAct Agent'),
+        (13, 'code', '# 3. 그래프 구조'),
+        (16, 'code', '# 4. Agent 실행'),
+        (19, 'code', '# 5. 테스트 1'),
+        (22, 'code', '# 6. 테스트 2'),
+        (25, 'code', '# 8. 불변 속성'),
         (26, 'markdown', '## 9. 실습 문제'),
         (27, 'markdown', '### 문제 1'),
         (28, 'code', '# TODO'),
@@ -102,9 +109,10 @@ def verify_notebook3() -> bool:
         return False
 
     print("   ✅ PASSED")
-    print(f"      • 8 main sections with theory + code")
+    print(f"      • 8 main sections with theory + code (섹션 7은 테스트 없음)")
     print(f"      • 10 practice problems in ascending order (1→2→...→10)")
     print(f"      • Code cells have matching section comments")
+    print(f"      • 섹션 8 (불변 속성 검증) 포함")
     return True
 
 def main():
