@@ -65,26 +65,27 @@ def verify_notebook3() -> bool:
 
     cells = nb['cells']
 
-    # Check structure
+    # Check structure (AFTER REORDERING - updated indices)
     checks = [
         (0, 'markdown', '## 환경 설정'),
         (1, 'markdown', '# Tool 기반'),
         (2, 'markdown', '## 1. 투자'),
         (4, 'code', '# 1. 투자 분석 도구'),
-        (7, 'code', '# 1. 투자 분석 도구'),
-        (10, 'code', '# 2. ReAct Agent'),
-        (13, 'code', '# 3. 그래프 구조'),
-        (16, 'code', '# 4. Agent 실행'),
-        (19, 'code', '# 5. 테스트 1'),
-        (22, 'code', '# 6. 테스트 2'),
-        (25, 'code', '# 8. 불변 속성'),
-        (26, 'markdown', '## 9. 실습 문제'),
-        (27, 'markdown', '### 문제 1'),
-        (28, 'code', '# TODO'),
-        (29, 'markdown', '### 문제 2'),
-        (30, 'code', '# TODO'),
-        (45, 'markdown', '### 문제 10'),
-        (46, 'code', '# TODO'),
+        (5, 'code', '# 1. 투자 분석 도구'),  # Section 1 has 2 code cells
+        (8, 'code', '# 2. ReAct Agent'),
+        (11, 'code', '# 3. 그래프 구조'),
+        (14, 'code', '# 4. Agent 실행'),
+        (17, 'code', '# 5. 테스트 1'),
+        (20, 'code', '# 6. 테스트 2'),
+        (23, 'code', '# 7. 테스트 3'),      # Fixed: was "# 8. 불변 속성"
+        (26, 'code', '# 불변 속성'),        # Section 8 code
+        (27, 'markdown', '## 9. 실습 문제'),
+        (28, 'markdown', '### 문제 1'),
+        (29, 'code', '# TODO'),
+        (30, 'markdown', '### 문제 2'),
+        (31, 'code', '# TODO'),
+        (46, 'markdown', '### 문제 10'),
+        (47, 'code', '# TODO'),
     ]
 
     errors = []
