@@ -27,6 +27,12 @@ Educational project teaching investment strategy development with LangGraph. Per
 
 **Never write Python before Idris specs are complete and compiled.**
 
+**Learning Idris**: See [docs/IDRIS_GUIDE.md](docs/IDRIS_GUIDE.md) for:
+- Basic syntax and patterns
+- Common tasks (add structure, modify validation)
+- Error troubleshooting
+- Practical examples from this project
+
 ### Commands
 
 ```bash
