@@ -55,13 +55,22 @@ def reorder_notebook(notebook_path):
     print(f"✅ Reordered {notebook_path}")
 
 if __name__ == '__main__':
+    import os
+
+    # Get project root directory (2 levels up from this script)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(script_dir))
+
     notebooks = [
-        'notebooks/1_generate.ipynb',
-        'notebooks/2_web_search.ipynb',
-        'notebooks/3_tool_agent.ipynb'
+        os.path.join(project_root, 'notebooks/1_generate.ipynb'),
+        os.path.join(project_root, 'notebooks/2_web_search.ipynb'),
+        os.path.join(project_root, 'notebooks/3_tool_agent.ipynb')
     ]
 
     for nb_path in notebooks:
-        reorder_notebook(nb_path)
+        if os.path.exists(nb_path):
+            reorder_notebook(nb_path)
+        else:
+            print(f"⚠️ File not found: {nb_path}")
 
     print("\n✅ All notebooks reordered successfully!")

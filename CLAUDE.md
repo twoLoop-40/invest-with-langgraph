@@ -106,13 +106,15 @@ invest-with-langgraph/
 │   ├── Workflow.idr            # LangGraph workflow spec
 │   ├── Tools.idr               # Tool framework spec
 │   └── ReActAgent.idr          # ReAct pattern spec
-├── python/models/
-│   └── tools.py                # Investment analysis tools implementation
+├── python/
+│   ├── models/
+│   │   └── tools.py            # Investment analysis tools implementation
+│   └── utils/
+│       └── reorder_notebooks.py # Utility: reorder notebook cells (explanation before code)
 ├── notebooks/
-│   ├── 1 generate.ipynb        # Basic: query → answer
-│   ├── 2 web_search.ipynb      # Advanced: eval loop + web search
-│   └── 3_tool_agent.ipynb      # ReAct agent with 10 practice problems
-├── src/invest_with_langgraph/  # Empty placeholder
+│   ├── 1_generate.ipynb        # Basic: query → answer (3 practice problems)
+│   ├── 2_web_search.ipynb      # Advanced: eval loop + web search (10 practice problems)
+│   └── 3_tool_agent.ipynb      # ReAct agent with tools (10 practice problems)
 ├── .env                         # API keys (OPENAI_API_KEY, TAVILY_API_KEY)
 ├── pyproject.toml               # uv-based dependencies (Python ≥3.13)
 ├── uv.lock                      # uv locked versions
@@ -120,9 +122,38 @@ invest-with-langgraph/
 └── CLAUDE.md                    # This file
 ```
 
+## Utilities
+
+### Notebook Cell Reordering
+
+**Location**: `python/utils/reorder_notebooks.py`
+
+**Purpose**: Reorders notebook cells to place explanation markdown cells before code cells for better student learning experience.
+
+**Usage**:
+```bash
+python3 python/utils/reorder_notebooks.py
+```
+
+**What it does**:
+- Scans all notebooks in `notebooks/` directory
+- Finds code cells followed by markdown explanation cells (starting with `##`)
+- Swaps them so explanation comes before code
+- Current structure: `code → explanation` → Target: `explanation → code`
+- Helps students understand the concept before seeing implementation
+
+**When to use**:
+- After adding new explanation cells to notebooks
+- When creating new educational notebooks
+- To ensure consistent learning flow across all notebooks
+
 ## Key Implementation Details
 
-**Notebooks**: Run cells sequentially top-to-bottom. State schema differs between notebooks.
+**Notebooks**:
+- Run cells sequentially top-to-bottom
+- Each notebook has explanation (theory + code explanation) before code cells
+- State schema differs between notebooks
+- All notebooks include practice problems with fill-in-the-blank exercises
 
 **Cost Management**:
 - GPT-4o-mini: ~$0.5 per 100 queries
