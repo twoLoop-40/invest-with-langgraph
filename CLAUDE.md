@@ -11,7 +11,7 @@ Educational project teaching investment strategy development with LangGraph. Per
 **Progress Tracking**: GitHub Projects for student progress monitoring
 **Language**: Bilingual (Korean/English) for Korean students
 
-**Current Status**: Tool-based architecture implemented. Idris specs compiled, Python implementation complete with student practice exercises.
+**Current Status**: Tool-based architecture implemented. Idris specs compiled (7 files), Python implementation complete with student practice exercises. Notebooks properly ordered (explanation → code pairs).
 
 ## Development Workflow
 
@@ -83,19 +83,22 @@ class AgentState(TypedDict):
 ### Current Architecture (per spec.yaml)
 
 ```
-idris/Domain/     # Formal specifications (✅ ALL COMPILED)
+idris/Domain/     # Formal specifications (✅ ALL COMPILED - 7 files)
   ├── InvestmentAgent.idr    # Core agent state & evaluation
   ├── Workflow.idr           # LangGraph workflow semantics
   ├── Tools.idr              # Tool-based architecture (4 investment tools)
   ├── ReActAgent.idr         # ReAct pattern specification
   ├── NotebookStructure.idr  # Notebook cell ordering spec (sequential algorithm)
-  └── CellAssociation.idr    # Explanation-code association spec (active)
+  ├── CellAssociation.idr    # Explanation-code association spec (deprecated)
+  └── NotebookCleaning.idr   # Notebook cleaning & reordering spec (active)
 python/models/    # Python implementations (✅ COMPLETE)
   └── tools.py               # 4 @tool decorated functions + ToolAgentState
 python/utils/     # Utility scripts (✅ ACTIVE)
   ├── README.md              # Utils documentation
-  ├── reorder_with_associations.py  # Association-based reordering
-  └── visualize_associations.py     # Association visualization
+  ├── fix_notebook2.py       # Manual cell reordering for notebook 2
+  ├── clean_and_reorder_notebooks.py  # Experimental keyword-based reordering
+  ├── reorder_with_associations.py    # Association-based reordering (deprecated)
+  └── visualize_associations.py       # Association visualization
 python/tests/     # Test suite (NOT CREATED)
 notebooks/        # Problem-based exercises (✅ PROPERLY ORDERED)
   ├── 1_generate.ipynb       # Basic: query → answer (12 associations)
@@ -260,15 +263,16 @@ initial_state = {
 ## Gap Analysis (Current vs. spec.yaml)
 
 **Completed**:
-- ✅ Idris specifications (6 files compiled successfully)
+- ✅ Idris specifications (7 files compiled successfully)
   - InvestmentAgent.idr, Workflow.idr, Tools.idr, ReActAgent.idr
-  - NotebookStructure.idr, CellAssociation.idr (new!)
+  - NotebookStructure.idr, CellAssociation.idr (deprecated), NotebookCleaning.idr (new!)
 - ✅ Tool-based architecture (4 investment tools: search_web, get_stock_price, calculate_moving_average, get_company_info)
 - ✅ Python models matching Idris specs (`python/models/tools.py`)
 - ✅ Python utilities with Idris specs (`python/utils/`)
 - ✅ Student practice exercises (10 progressive fill-in-the-blank problems in notebook 3)
 - ✅ Migration to uv package manager (poetry.lock removed)
-- ✅ Notebook cell ordering (explanation → code pairs for all notebooks)
+- ✅ Notebook 2 cell ordering fixed (explanation → code pairs, proper sequence 1-10)
+- ✅ All code cell outputs cleared for clean student experience
 
 **Missing Components**:
 - Test suite (`python/tests/`)
