@@ -12,10 +12,11 @@ Eq CellType where
 
 -- Cell content classification
 data CellContent
-  = Header String           -- ## Section title
-  | Explanation String      -- Theory or code explanation
-  | CodeBlock String        -- Executable code
-  | Other String            -- Misc markdown
+  = Header String                    -- Pure header: "## Title" only
+  | SectionWithExplanation String    -- "## Title\n\n### 이론\n..." (combined)
+  | Explanation String               -- Pure explanation without ## header
+  | CodeBlock String                 -- Executable code
+  | Other String                     -- Misc markdown
 
 -- A cell with type and content
 record Cell where
@@ -26,11 +27,13 @@ record Cell where
 -- Check if cell is a section header (starts with ##)
 isSectionHeader : Cell -> Bool
 isSectionHeader (MkCell Markdown (Header _)) = True
+isSectionHeader (MkCell Markdown (SectionWithExplanation _)) = True
 isSectionHeader _ = False
 
 -- Check if cell is an explanation
 isExplanation : Cell -> Bool
 isExplanation (MkCell Markdown (Explanation _)) = True
+isExplanation (MkCell Markdown (SectionWithExplanation _)) = True
 isExplanation _ = False
 
 -- Check if cell is code
@@ -43,8 +46,20 @@ record Section where
   constructor MkSection
   header : Maybe Cell           -- Optional section header
   explanations : List Cell      -- Explanation cells (markdown)
-  codeCells : List Cell         -- Code cells
+  codeCells : List Cell         -- Code cells belonging to this section
   otherCells : List Cell        -- Other markdown cells
+
+-- Section association strategy:
+-- When parsing a notebook sequentially:
+-- 1. Track "current section" (last seen section header/explanation)
+-- 2. Code cells belong to the current section
+-- 3. When new section starts, previous section is complete
+--
+-- Example:
+--   Cell 1: ## 1. Title\n\n### 이론... (starts Section 1)
+--   Cell 2: code                        (belongs to Section 1)
+--   Cell 3: ## 2. Next\n\n### 이론...  (starts Section 2, Section 1 complete)
+--   Cell 4: code                        (belongs to Section 2)
 
 -- INVARIANT: In a valid section, explanations come before code
 -- This is the core property we want to maintain
@@ -114,6 +129,26 @@ reorderNotebook : Notebook -> Notebook
 reorderNotebook nb =
   MkNotebook (map reorderSection nb.sections)
 
+-- Sequential section building algorithm (Python implementation)
+-- Input: List of cells in original order
+-- Output: List of sections with proper code association
+--
+-- Algorithm:
+-- 1. Initialize: currentSection = Nothing, sections = []
+-- 2. For each cell:
+--    a. If cell is SectionWithExplanation or Header:
+--       - Save currentSection to sections (if not Nothing)
+--       - Start new section with this cell
+--    b. If cell is Code:
+--       - Add to currentSection.codeCells
+--    c. If cell is Explanation:
+--       - Add to currentSection.explanations
+--    d. If cell is Other:
+--       - Add to currentSection.otherCells
+-- 3. Save final currentSection
+--
+-- This ensures code cells are associated with their preceding section
+
 -- Classification functions (to be implemented in Python)
 -- These define how to classify cells from raw notebook data
 namespace Classification
@@ -121,12 +156,16 @@ namespace Classification
   -- Idris spec defines the logic, Python implements the runtime checks
 
   -- Classify cell content based on markdown text
-  -- Python should check:
-  -- 1. If markdown starts with "##" -> Header
-  -- 2. If markdown contains explanation keywords -> Explanation
-  --    Keywords: "이론", "코드 설명", "설명", "학습 목표", "theory", "explanation"
-  -- 3. Otherwise -> Other
-  -- 4. If code type -> CodeBlock
+  -- Python should check (in priority order):
+  -- 1. If code type -> CodeBlock
+  -- 2. If markdown starts with "##" AND contains explanation subsections
+  --    -> SectionWithExplanation
+  --    Subsection markers: "### 이론", "### 코드 설명", "### 설명"
+  --                        "### theory", "### explanation", "### code explanation"
+  --    Example: "## 1. Title\n\n### 이론\nContent..." -> SectionWithExplanation
+  -- 3. If markdown starts with "##" (without explanation subsections) -> Header
+  -- 4. If markdown contains explanation subsections (without ##) -> Explanation
+  -- 5. Otherwise -> Other
   classifyContent : String -> CellType -> CellContent
   classifyContent text Markdown =
     -- Simplified for type checking - Python implements full logic
@@ -138,8 +177,8 @@ namespace Example
   -- A valid section structure
   exampleSection : Section
   exampleSection = MkSection
-    (Just (MkCell Markdown (Header "## 1. Generate - 기본 체인")))
-    [MkCell Markdown (Explanation "이 섹션에서는 기본적인 생성 체인을 학습합니다.")]
+    Nothing
+    [MkCell Markdown (SectionWithExplanation "## 1. Generate\n\n### 이론\n기본 체인 학습")]
     [MkCell Code (CodeBlock "def generate(state): ...")]
     []
 
