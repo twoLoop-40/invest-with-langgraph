@@ -11,7 +11,7 @@ Educational project teaching investment strategy development with LangGraph. Per
 **Progress Tracking**: GitHub Projects for student progress monitoring
 **Language**: Bilingual (Korean/English) for Korean students
 
-**Current Status**: Transitioning to spec.yaml architecture. `idris/Domain/` created with initial specifications.
+**Current Status**: Tool-based architecture implemented. Idris specs compiled, Python implementation complete with student practice exercises.
 
 ## Development Workflow
 
@@ -80,31 +80,44 @@ class AgentState(TypedDict):
 **Nodes**: `generate` → `qa_eval` (conditional) → `web_search` → loop
 **Tools**: OpenAI GPT-4o-mini, Tavily search (3 results, advanced depth)
 
-### Intended Architecture (spec.yaml)
+### Current Architecture (per spec.yaml)
 
 ```
-idris/Domain/     # Formal specifications (IN PROGRESS)
+idris/Domain/     # Formal specifications (✅ COMPILED)
   ├── InvestmentAgent.idr  # Core agent state & evaluation
   ├── Workflow.idr         # LangGraph workflow semantics
-  ├── Tools.idr            # Tool-based architecture (NEW)
-  └── ReActAgent.idr       # ReAct pattern specification (NEW)
-python/models/    # Python implementations (NOT CREATED - pending Idris completion)
+  ├── Tools.idr            # Tool-based architecture (4 investment tools)
+  └── ReActAgent.idr       # ReAct pattern specification
+python/models/    # Python implementations (✅ COMPLETE)
+  └── tools.py             # 4 @tool decorated functions + ToolAgentState
 python/tests/     # Test suite (NOT CREATED)
-notebooks/        # Problem-based exercises (EXISTS but not in exercise format)
+notebooks/        # Problem-based exercises (✅ STUDENT VERSION)
+  ├── 1 generate.ipynb     # Basic: query → answer
+  ├── 2 web_search.ipynb   # Advanced: eval loop + web search
+  └── 3_tool_agent.ipynb   # ReAct agent with 10 practice problems
 ```
 
 ## File Structure
 
 ```
 invest-with-langgraph/
+├── idris/Domain/
+│   ├── InvestmentAgent.idr    # Agent state & evaluation spec
+│   ├── Workflow.idr            # LangGraph workflow spec
+│   ├── Tools.idr               # Tool framework spec
+│   └── ReActAgent.idr          # ReAct pattern spec
+├── python/models/
+│   └── tools.py                # Investment analysis tools implementation
 ├── notebooks/
-│   ├── 1 generate.ipynb       # Basic: query → answer
-│   └── 2 web_search.ipynb     # Advanced: eval loop + web search
-├── src/invest_with_langgraph/ # Empty placeholder
-├── .env                        # API keys (OPENAI_API_KEY, TAVILY_API_KEY)
-├── pyproject.toml              # Dependencies (Python ≥3.13)
-├── uv.lock                     # Locked versions
-└── spec.yaml                   # Project specification
+│   ├── 1 generate.ipynb        # Basic: query → answer
+│   ├── 2 web_search.ipynb      # Advanced: eval loop + web search
+│   └── 3_tool_agent.ipynb      # ReAct agent with 10 practice problems
+├── src/invest_with_langgraph/  # Empty placeholder
+├── .env                         # API keys (OPENAI_API_KEY, TAVILY_API_KEY)
+├── pyproject.toml               # uv-based dependencies (Python ≥3.13)
+├── uv.lock                      # uv locked versions
+├── spec.yaml                    # Project specification
+└── CLAUDE.md                    # This file
 ```
 
 ## Key Implementation Details
@@ -129,13 +142,15 @@ initial_state = {
 }
 ```
 
-## Dependencies
+## Dependencies (managed by uv)
 
 - `notebook (≥7.4.4)` - Jupyter
 - `langchain-openai (≥0.3.27)` - OpenAI integration
 - `langgraph (≥0.5.2)` - Graph workflow
 - `langchain-tavily (≥0.2.7)` - Web search
+- `langchain-community (≥0.3.27)` - Community integrations
 - `python-dotenv (≥1.1.1)` - .env loading
+- `yfinance (≥0.2.66)` - Yahoo Finance API for stock data
 
 ## Development Rules
 
@@ -159,20 +174,21 @@ initial_state = {
 
 ## Gap Analysis (Current vs. spec.yaml)
 
-**In Progress**:
-- ✅ Idris specifications (initial files created)
-- 🔄 Tool-based architecture (Idris spec ready, needs compilation check)
+**Completed**:
+- ✅ Idris specifications (all 4 files compiled successfully)
+- ✅ Tool-based architecture (4 investment tools: search_web, get_stock_price, calculate_moving_average, get_company_info)
+- ✅ Python models matching Idris specs (`python/models/tools.py`)
+- ✅ Student practice exercises (10 progressive fill-in-the-blank problems in notebook 3)
+- ✅ Migration to uv package manager (poetry.lock removed)
 
 **Missing Components**:
-- Problem-based exercise format (separate exercise/solution notebooks)
-- Python models matching Idris specs
 - Test suite (`python/tests/`)
 - GitHub Projects integration for progress tracking
 - Version alignment (spec: 1.0.0, pyproject: 0.1.0)
+- Separate exercise/solution notebooks (currently combined)
 
 **Next Steps**:
-1. Verify Idris compilation for Tools.idr and ReActAgent.idr
-2. Implement Python models mirroring Idris specs
-3. Add property-based tests verifying spec compliance
-4. Split notebooks into exercise/solution pairs
-5. Set up GitHub Project board for student progress tracking
+1. Add property-based tests verifying spec compliance
+2. Set up GitHub Project board for student progress tracking
+3. Consider splitting notebooks into exercise/solution pairs
+4. Update version to 1.0.0 if ready for release
