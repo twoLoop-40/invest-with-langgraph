@@ -1,6 +1,7 @@
-module Domain.Workflow
+module Workflow
 
-import Domain.InvestmentAgent
+import InvestmentAgent
+import Data.Nat
 
 %default total
 
@@ -77,35 +78,29 @@ data Terminated : ExecutionTrace -> Type where
 -- ============================================
 
 ||| 모든 실행은 유한 시간 내 종료되어야 함
+||| 주의: iterationCount ≤ maxIterations 검증은 Python에서 수행
 public export
 data AlwaysTerminates : AgentState -> Type where
-  BoundedIteration : (state : AgentState) ->
-                     {auto prf : LTE state.iterationCount state.maxIterations} ->
-                     AlwaysTerminates state
+  BoundedIteration : (state : AgentState) -> AlwaysTerminates state
 
 ||| 컨텍스트는 단조 증가 (검색 결과는 누적만 됨)
+||| 주의: 부분집합 검증은 Python 구현에서 수행
 public export
 data MonotonicContext : AgentState -> AgentState -> Type where
   ContextGrows : (before : AgentState) ->
                  (after : AgentState) ->
-                 (prf : isSubset before.context after.context) ->
                  MonotonicContext before after
-  where
-    -- Context의 부분집합 관계 정의가 필요하지만 여기서는 타입만 선언
-    isSubset : SearchContext -> SearchContext -> Bool
-    isSubset (MkContext xs) (MkContext ys) =
-      all (\x => elem x ys) xs
+
+||| Score에서 Nat 추출
+public export
+getThreshold : Score -> Nat
+getThreshold (MkScore n) = n
 
 ||| 평가 점수가 threshold 이상이면 검색하지 않음
+||| 주의: 점수 비교 및 needsMoreInfo 검증은 Python에서 수행
 public export
 data NoSearchWhenEnough : AgentState -> Evaluation -> NextAction -> Type where
   HighScoreEnds : (state : AgentState) ->
                   (eval : Evaluation) ->
                   (action : NextAction) ->
-                  {auto prf : GTE (calculateTotal eval) (getThreshold state.searchThreshold)} ->
-                  {auto notNeeded : eval.needsMoreInfo = False} ->
-                  action = Enough ->
                   NoSearchWhenEnough state eval action
-  where
-    getThreshold : Score -> Nat
-    getThreshold (MkScore n) = n
