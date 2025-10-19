@@ -57,7 +57,8 @@ def reorder_notebook(notebook_path):
 if __name__ == '__main__':
     notebooks = [
         'notebooks/1_generate.ipynb',
-        'notebooks/2_web_search.ipynb'
+        'notebooks/2_web_search.ipynb',
+        'notebooks/3_tool_agent.ipynb'
     ]
 
     for nb_path in notebooks:
