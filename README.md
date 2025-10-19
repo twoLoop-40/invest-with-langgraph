@@ -24,6 +24,31 @@ LangGraph를 활용한 AI 기반 주식 투자 어시스턴트입니다. 웹 검
 - **실시간 주가 정보**: Tavily 검색 API를 통한 최신 주식 정보 제공
 - **LangGraph 워크플로우**: 상태 기반 그래프 구조로 체계적인 작업 흐름 관리
 
+## 🌟 이 프로젝트의 특별한 점
+
+### Idris 형식 명세 기반 개발
+
+이 프로젝트는 **Idris**(함수형 프로그래밍 언어)로 먼저 정확한 **형식 명세(Formal Specification)**를 작성한 후, 그것을 바탕으로 Python 코드를 구현하는 독특한 방식으로 개발되었습니다.
+
+**왜 이렇게 하나요?**
+- 📝 **명세가 문서 역할**: 코드가 어떻게 동작해야 하는지 정확히 정의
+- ✅ **타입 안전성**: 컴파일 단계에서 오류 발견 (실행 전에!)
+- 🎯 **명확한 기준**: Python 코드의 정확성을 검증할 수 있는 기준 제공
+
+**학생 여러분은 걱정하지 마세요!**
+- Idris 코드를 몰라도 괜찮습니다
+- Python 노트북만으로도 충분히 학습 가능합니다
+- 관심 있는 학생은 `idris/Domain/` 폴더에서 명세를 구경할 수 있습니다
+
+### 완벽한 학습 순서
+
+모든 노트북은 **설명 → 코드** 순서로 정렬되어 있습니다:
+- 개념을 먼저 이해하고
+- 그 다음 코드를 봅니다
+- 이렇게 하면 학습이 훨씬 쉽습니다!
+
+이것도 Idris 명세를 기반으로 자동 정렬된 것입니다. (자세한 내용: [python/utils/README.md](python/utils/README.md))
+
 ## 📦 시작하기 전에
 
 ### 필수 요구사항
@@ -454,30 +479,46 @@ deactivate
 
 ```
 invest-with-langgraph/
-├── 📁 idris/Domain/           # Idris 형식 명세 (고급)
-│   ├── InvestmentAgent.idr   # Agent 상태 명세
+├── 📁 notebooks/              # 🎓 실습용 노트북 (여기서 시작!)
+│   ├── 1_generate.ipynb       # 1단계: 기본 생성 예제
+│   ├── 2_web_search.ipynb     # 2단계: 웹 검색 어시스턴트
+│   └── 3_tool_agent.ipynb     # 3단계: Tool 기반 Agent + 10개 실습
+│
+├── 📁 python/
+│   ├── models/                # Python 구현체
+│   │   └── tools.py           # 투자 분석 도구 4개
+│   └── utils/                 # 유틸리티 스크립트
+│       ├── README.md          # 유틸리티 설명서
+│       ├── reorder_with_associations.py   # 노트북 자동 정렬
+│       └── visualize_associations.py      # 정렬 시각화
+│
+├── 📁 idris/Domain/           # 🔬 Idris 형식 명세 (고급/선택)
+│   ├── InvestmentAgent.idr    # Agent 상태 명세
 │   ├── Workflow.idr           # 워크플로우 명세
 │   ├── Tools.idr              # 도구 시스템 명세
-│   └── ReActAgent.idr         # ReAct 패턴 명세
+│   ├── ReActAgent.idr         # ReAct 패턴 명세
+│   ├── NotebookStructure.idr  # 노트북 구조 명세
+│   └── CellAssociation.idr    # 셀 연관 명세
 │
-├── 📁 python/models/          # Python 구현
-│   └── tools.py               # 투자 분석 도구 4개
+├── 📁 .venv/                  # 가상환경 (자동 생성됨)
 │
-├── 📁 notebooks/              # 실습용 노트북 (여기서 시작!)
-│   ├── 1 generate.ipynb       # 기본 생성 예제
-│   ├── 2 web_search.ipynb     # 웹 검색 어시스턴트
-│   └── 3_tool_agent.ipynb     # Tool 기반 Agent + 10개 실습
-│
-├── 📁 .venv/                  # 가상환경 (자동 생성, 건드리지 마세요!)
-│
-├── 📄 .env                    # API 키 저장 (직접 만들어야 함)
-├── 📄 .gitignore              # Git이 무시할 파일 목록
-├── 📄 pyproject.toml          # 프로젝트 설정
+├── 📄 .env                    # ⚠️ API 키 (직접 만들어야 함!)
+├── 📄 pyproject.toml          # 프로젝트 설정 및 의존성
 ├── 📄 uv.lock                 # 패키지 버전 고정
 ├── 📄 spec.yaml               # 프로젝트 명세
-├── 📄 CLAUDE.md               # AI 개발 가이드
+├── 📄 CLAUDE.md               # AI 개발자용 가이드
 └── 📄 README.md               # 이 파일!
 ```
+
+### 📂 폴더별 설명
+
+| 폴더 | 중요도 | 설명 |
+|------|--------|------|
+| `notebooks/` | ⭐⭐⭐ | **여기서 시작!** 학습용 Jupyter 노트북 |
+| `python/models/` | ⭐⭐ | 투자 분석 도구 구현 (참고용) |
+| `python/utils/` | ⭐ | 노트북 관리 도구 (선택) |
+| `idris/Domain/` | 선택 | 형식 명세 (관심있는 학생만) |
+| `.venv/` | 🚫 | **건드리지 마세요!** 자동 생성 가상환경 |
 
 ---
 
@@ -716,26 +757,135 @@ rm -rf invest-with-langgraph
 
 ## 🎓 학습 로드맵
 
-### 초급 (1-2주)
+### 📅 Week 1-2: 기초 다지기
 
-- [ ] Python 기초 문법 복습
-- [ ] Jupyter Notebook 사용법 익히기
-- [ ] `1 generate.ipynb` 실행해보기
-- [ ] 코드 한 줄씩 이해하기
+**목표**: 환경 설정 및 기본 개념 이해
 
-### 중급 (2-4주)
+- [ ] Python 기초 문법 복습 (변수, 함수, 클래스)
+- [ ] 프로젝트 설치 및 환경 설정 완료
+- [ ] API 키 발급 및 `.env` 파일 작성
+- [ ] Jupyter Notebook 사용법 익히기 (`Shift+Enter` 실행)
+- [ ] **`1_generate.ipynb` 완료**
+  - [ ] 셀을 위에서부터 순서대로 실행
+  - [ ] 각 셀의 출력 확인
+  - [ ] 주석 읽으며 코드 이해하기
+  - [ ] 실습 문제 3개 풀어보기
 
-- [ ] LangChain 기본 개념 학습
-- [ ] `2 web_search.ipynb` 실행해보기
+**학습 자료**:
+- [Python 기초 튜토리얼](https://docs.python.org/ko/3/tutorial/)
+- [Jupyter 사용법](https://jupyter-notebook.readthedocs.io/)
+
+---
+
+### 📅 Week 3-4: 웹 검색 Agent
+
+**목표**: LangGraph 워크플로우 이해
+
+- [ ] LangChain 기본 개념 학습 (Chain, Agent, Tool)
+- [ ] **`2_web_search.ipynb` 완료**
+  - [ ] 코드 실행하며 워크플로우 관찰
+  - [ ] 평가 점수 변화 확인
+  - [ ] 검색 결과가 답변에 어떻게 반영되는지 확인
+  - [ ] 실습 문제 10개 도전!
 - [ ] 질문을 바꿔가며 테스트
-- [ ] 코드 수정해보기
+  - 예: "2025년 테슬라 주가 전망은?"
+  - 예: "삼성전자 배당금 정보"
+- [ ] 코드 파라미터 수정해보기
+  ```python
+  'search_threshold': 10,  # 검색을 더 자주
+  'max_iterations': 5      # 더 많이 반복
+  ```
 
-### 고급 (4주+)
+**학습 자료**:
+- [LangChain 공식 문서](https://python.langchain.com/)
+- [LangGraph 소개](https://python.langchain.com/docs/langgraph)
 
-- [ ] LangGraph 그래프 구조 이해
+---
+
+### 📅 Week 5-6: Tool Agent 마스터
+
+**목표**: ReAct 패턴 이해 및 활용
+
+- [ ] **`3_tool_agent.ipynb` 완료**
+  - [ ] 4개 도구 동작 방식 이해
+  - [ ] Agent가 어떤 도구를 선택하는지 관찰
+  - [ ] 실습 문제 10개 모두 완료
+- [ ] 나만의 질문 만들어보기
+  - 예: "애플과 마이크로소프트 중 어디에 투자?"
+  - 예: "반도체 업종 전망은?"
+- [ ] 코드 응용해보기
+  - 새로운 도구 추가
+  - 여러 주식 비교하는 기능 만들기
+
+**학습 자료**:
+- [yfinance 문서](https://pypi.org/project/yfinance/)
+- [LangChain Tools](https://python.langchain.com/docs/modules/agents/tools/)
+
+---
+
+### 📅 Week 7-8: 심화 학습
+
+**목표**: 프로젝트 커스터마이징
+
+- [ ] LangGraph 그래프 구조 깊이 이해
+  - `StateGraph`, 노드, 엣지 개념
+  - 조건부 분기 (Conditional Edge)
 - [ ] 새로운 노드 추가해보기
+  - 예: 기술적 분석 노드
+  - 예: 뉴스 감성 분석 노드
 - [ ] 다른 LLM 모델 연동
+  - GPT-4 (더 정확, 비용 높음)
+  - Claude (Anthropic)
 - [ ] 자신만의 워크플로우 만들기
+  - 포트폴리오 추천 Agent
+  - 리스크 분석 Agent
+
+---
+
+### 🎯 최종 프로젝트 아이디어
+
+완전히 학습한 후 도전해볼 프로젝트:
+
+1. **포트폴리오 백테스팅 Agent**
+   - 과거 데이터로 투자 전략 테스트
+   - 수익률 계산 및 시각화
+
+2. **실시간 뉴스 분석 Agent**
+   - 특정 종목 뉴스 수집
+   - 감성 분석 (긍정/부정)
+   - 투자 의견 생성
+
+3. **다중 종목 비교 Agent**
+   - 여러 종목 동시 분석
+   - 재무비율 비교 테이블
+   - 최적 투자처 추천
+
+4. **알림 시스템**
+   - 특정 조건 만족 시 알림
+   - 예: 주가 10% 하락 시
+   - 예: 거래량 급증 시
+
+---
+
+### 💡 학습 팁
+
+1. **천천히, 확실하게**
+   - 이해 안 되는 부분은 넘어가지 말고 검색
+   - 코드를 직접 수정해보며 실험
+
+2. **오류를 두려워하지 마세요**
+   - 오류 메시지를 읽고 이해하는 연습
+   - [문제 해결](#-문제-해결) 섹션 참고
+
+3. **커뮤니티 활용**
+   - GitHub Issues에 질문
+   - Stack Overflow 검색
+   - LangChain Discord 참여
+
+4. **비용 관리**
+   - 처음엔 `max_iterations: 1`로 테스트
+   - OpenAI 대시보드에서 사용량 확인
+   - 무료 Tavily 할당량(1000회) 체크
 
 ---
 
