@@ -69,6 +69,14 @@ record NotebookReorderingSpec where
 defaultSpec : NotebookReorderingSpec
 defaultSpec = MkReorderingSpec
   True              -- Clean outputs first
-  "automatic"       -- Automatic classification
-  "sequential"      -- Sequential matching (Nth markdown → Nth code)
+  "manual"          -- Manual classification (most reliable)
+  "manual"          -- Manual matching (ensures correctness)
   True              -- Preserve unmatched cells
+
+-- Notebook structure
+-- 1. Main sections: Title → Section 1 → Code 1 → Section 2 → Code 2 ... → Section N → Code N
+-- 2. Practice problems: Header → Problem 1 (markdown) → Code 1 → Problem 2 (markdown) → Code 2 ... → Problem N → Code N
+-- 3. Answers: Divider → Answer code
+--
+-- IMPORTANT: Practice problems MUST be in ascending order (1, 2, 3, ..., N)
+-- Each problem consists of: markdown explanation → TODO code cell
