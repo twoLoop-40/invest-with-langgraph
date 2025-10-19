@@ -63,19 +63,20 @@ record Notebook3Structure where
   divider : CellIndex                  -- Cell 48: --- (divider before answers)
   answers : List CellIndex             -- Cell 49: 정답 예시 code
 
--- Concrete structure for Notebook 3 (AFTER REORDERING - 2025-01-19)
+-- Concrete structure for Notebook 3 (AFTER REORDERING + CLEANUP - 2025-01-19)
 -- Follows consistent "markdown → code" pattern throughout
+-- Empty markdown cell at old position 13 has been REMOVED
 --
--- Total: 51 cells (indices 0-50)
+-- Total: 50 cells (indices 0-49)
 --   Cells 0-1: Environment setup and title
---   Cells 2-27: 8 main sections (headers + theory + code)
---   Cells 28-48: Practice problems section (header + 10 problems)
---   Cells 49-50: Divider and answers
+--   Cells 2-26: 8 main sections (headers + theory + code)
+--   Cells 27-47: Practice problems section (header + 10 problems)
+--   Cells 48-49: Divider and answers
 notebook3Structure : Notebook3Structure
 notebook3Structure = MkNotebook3
   0                              -- Cell 0: ## 환경 설정
   1                              -- Cell 1: # Tool 기반 투자 분석 Agent (ReAct 패턴)
-  [2, 6, 9, 12, 16, 19, 22, 25]  -- Section headers: ## 1-8 (actual indices from notebook)
+  [2, 6, 9, 12, 15, 18, 21, 24]  -- Section headers: ## 1-8
   [ MkSection 1 3 [4, 5]         -- Section 1 (cells 2-5): 투자 분석 도구 가져오기
                                  --   Cell 2: ## 1. Header
                                  --   Cell 3: ### 이론
@@ -83,27 +84,27 @@ notebook3Structure = MkNotebook3
                                  --   Cell 5: Code - 도구 임포트 (import AVAILABLE_TOOLS)
   , MkSection 2 7 [8]            -- Section 2 (cells 6-8): ReAct Agent 생성
   , MkSection 3 10 [11]          -- Section 3 (cells 9-11): 그래프 구조 시각화
-  , MkSection 4 14 [15]          -- Section 4 (cells 12-15): Agent 실행 헬퍼 함수
-                                 --   Note: Has extra markdown at cell 13
-  , MkSection 5 17 [18]          -- Section 5 (cells 16-18): 테스트 1
-  , MkSection 6 20 [21]          -- Section 6 (cells 19-21): 테스트 2
-  , MkSection 7 23 [24]          -- Section 7 (cells 22-24): 테스트 3
-  , MkSection 8 26 [27]          -- Section 8 (cells 25-27): 불변 속성 검증
+  , MkSection 4 13 [14]          -- Section 4 (cells 12-14): Agent 실행 헬퍼 함수
+                                 --   Fixed: Empty markdown removed (was at old cell 13)
+  , MkSection 5 16 [17]          -- Section 5 (cells 15-17): 테스트 1
+  , MkSection 6 19 [20]          -- Section 6 (cells 18-20): 테스트 2
+  , MkSection 7 22 [23]          -- Section 7 (cells 21-23): 테스트 3
+  , MkSection 8 25 [26]          -- Section 8 (cells 24-26): 불변 속성 검증
   ]
-  28                             -- Cell 28: ## 9. 실습 문제
-  [ MkProblem 1 29 30            -- Problem 1 (cells 29-30): 도구 개수 확인
-  , MkProblem 2 31 32            -- Problem 2 (cells 31-32): 도구 이름 출력
-  , MkProblem 3 33 34            -- Problem 3 (cells 33-34): 특정 도구 찾기
-  , MkProblem 4 35 36            -- Problem 4 (cells 35-36): yfinance 주가 가져오기
-  , MkProblem 5 37 38            -- Problem 5 (cells 37-38): 최고가/최저가 찾기
-  , MkProblem 6 39 40            -- Problem 6 (cells 39-40): 이동평균선 계산
-  , MkProblem 7 41 42            -- Problem 7 (cells 41-42): 도구 함수 만들기
-  , MkProblem 8 43 44            -- Problem 8 (cells 43-44): @tool 데코레이터
-  , MkProblem 9 45 46            -- Problem 9 (cells 45-46): ToolAgentState 사용
-  , MkProblem 10 47 48           -- Problem 10 (cells 47-48): 나만의 질문
+  27                             -- Cell 27: ## 9. 실습 문제
+  [ MkProblem 1 28 29            -- Problem 1 (cells 28-29): 도구 개수 확인
+  , MkProblem 2 30 31            -- Problem 2 (cells 30-31): 도구 이름 출력
+  , MkProblem 3 32 33            -- Problem 3 (cells 32-33): 특정 도구 찾기
+  , MkProblem 4 34 35            -- Problem 4 (cells 34-35): yfinance 주가 가져오기
+  , MkProblem 5 36 37            -- Problem 5 (cells 36-37): 최고가/최저가 찾기
+  , MkProblem 6 38 39            -- Problem 6 (cells 38-39): 이동평균선 계산
+  , MkProblem 7 40 41            -- Problem 7 (cells 40-41): 도구 함수 만들기
+  , MkProblem 8 42 43            -- Problem 8 (cells 42-43): @tool 데코레이터
+  , MkProblem 9 44 45            -- Problem 9 (cells 44-45): ToolAgentState 사용
+  , MkProblem 10 46 47           -- Problem 10 (cells 46-47): 나만의 질문
   ]
-  49                             -- Cell 49: --- (divider)
-  [50]                           -- Cell 50: 정답 예시 (code)
+  48                             -- Cell 48: --- (divider)
+  [49]                           -- Cell 49: 정답 예시 (code)
 
 -- Validation functions
 isNotebook3Valid : Notebook3Structure -> Bool

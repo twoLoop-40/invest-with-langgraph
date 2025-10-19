@@ -70,6 +70,8 @@ def verify_notebook3() -> bool:
 
     Pattern: ## Header → ### 이론 → Code(s) → Next Section
 
+    Note: Empty markdown cell at old position 13 has been REMOVED
+
     Idris spec: idris/Domain/Notebook3Structure.idr
     """
     print("\n🔍 Verifying Notebook 3...")
@@ -81,6 +83,7 @@ def verify_notebook3() -> bool:
 
     # Check structure (corresponds to Idris notebook3Structure)
     # KEY: Section 1 has TWO code cells (cells 4 and 5)
+    # FIXED: Empty markdown at old cell 13 removed, indices shifted down by 1 from cell 13 onwards
     checks = [
         # Environment and title
         (0, 'markdown', '## 환경 설정'),
@@ -94,20 +97,20 @@ def verify_notebook3() -> bool:
         # Sections 2-8: Each has 1 code cell
         (8, 'code', '# 2. ReAct Agent'),    # Section 2 code (cells 6,7,8)
         (11, 'code', '# 3. 그래프 구조'),    # Section 3 code (cells 9,10,11)
-        (15, 'code', '# 4. Agent 실행'),    # Section 4 code (cells 12,13,14,15) - has extra markdown at 13
-        (18, 'code', '# 5. 테스트 1'),      # Section 5 code (cells 16,17,18)
-        (21, 'code', '# 6. 테스트 2'),      # Section 6 code (cells 19,20,21)
-        (24, 'code', '# 7. 테스트 3'),      # Section 7 code (cells 22,23,24)
-        (27, 'code', 'from python.models'), # Section 8 code (cells 25,26,27)
+        (14, 'code', '# 4. Agent 실행'),    # Section 4 code (cells 12,13,14) - empty markdown REMOVED!
+        (17, 'code', '# 5. 테스트 1'),      # Section 5 code (cells 15,16,17) - shifted down by 1
+        (20, 'code', '# 6. 테스트 2'),      # Section 6 code (cells 18,19,20) - shifted down by 1
+        (23, 'code', '# 7. 테스트 3'),      # Section 7 code (cells 21,22,23) - shifted down by 1
+        (26, 'code', 'from python.models'), # Section 8 code (cells 24,25,26) - shifted down by 1
 
-        # Practice problems
-        (28, 'markdown', '## 9. 실습 문제'), # Practice header (cell 28)
-        (29, 'markdown', '### 문제 1'),     # Problem 1 markdown (cell 29)
-        (30, 'code', '# TODO'),             # Problem 1 code (cell 30)
-        (31, 'markdown', '### 문제 2'),     # Problem 2 markdown (cell 31)
-        (32, 'code', '# TODO'),             # Problem 2 code (cell 32)
-        (47, 'markdown', '### 문제 10'),    # Problem 10 markdown (cell 47)
-        (48, 'code', '# TODO'),             # Problem 10 code (cell 48)
+        # Practice problems (all shifted down by 1)
+        (27, 'markdown', '## 9. 실습 문제'), # Practice header (cell 27, was 28)
+        (28, 'markdown', '### 문제 1'),     # Problem 1 markdown (cell 28, was 29)
+        (29, 'code', '# TODO'),             # Problem 1 code (cell 29, was 30)
+        (30, 'markdown', '### 문제 2'),     # Problem 2 markdown (cell 30, was 31)
+        (31, 'code', '# TODO'),             # Problem 2 code (cell 31, was 32)
+        (46, 'markdown', '### 문제 10'),    # Problem 10 markdown (cell 46, was 47)
+        (47, 'code', '# TODO'),             # Problem 10 code (cell 47, was 48)
     ]
 
     errors = []
