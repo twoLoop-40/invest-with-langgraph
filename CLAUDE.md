@@ -83,18 +83,24 @@ class AgentState(TypedDict):
 ### Current Architecture (per spec.yaml)
 
 ```
-idris/Domain/     # Formal specifications (✅ COMPILED)
-  ├── InvestmentAgent.idr  # Core agent state & evaluation
-  ├── Workflow.idr         # LangGraph workflow semantics
-  ├── Tools.idr            # Tool-based architecture (4 investment tools)
-  └── ReActAgent.idr       # ReAct pattern specification
+idris/Domain/     # Formal specifications (✅ ALL COMPILED)
+  ├── InvestmentAgent.idr    # Core agent state & evaluation
+  ├── Workflow.idr           # LangGraph workflow semantics
+  ├── Tools.idr              # Tool-based architecture (4 investment tools)
+  ├── ReActAgent.idr         # ReAct pattern specification
+  ├── NotebookStructure.idr  # Notebook cell ordering spec (sequential algorithm)
+  └── CellAssociation.idr    # Explanation-code association spec (active)
 python/models/    # Python implementations (✅ COMPLETE)
-  └── tools.py             # 4 @tool decorated functions + ToolAgentState
+  └── tools.py               # 4 @tool decorated functions + ToolAgentState
+python/utils/     # Utility scripts (✅ ACTIVE)
+  ├── README.md              # Utils documentation
+  ├── reorder_with_associations.py  # Association-based reordering
+  └── visualize_associations.py     # Association visualization
 python/tests/     # Test suite (NOT CREATED)
-notebooks/        # Problem-based exercises (✅ STUDENT VERSION)
-  ├── 1 generate.ipynb     # Basic: query → answer
-  ├── 2 web_search.ipynb   # Advanced: eval loop + web search
-  └── 3_tool_agent.ipynb   # ReAct agent with 10 practice problems
+notebooks/        # Problem-based exercises (✅ PROPERLY ORDERED)
+  ├── 1_generate.ipynb       # Basic: query → answer (12 associations)
+  ├── 2_web_search.ipynb     # Advanced: eval loop + web search (11 associations)
+  └── 3_tool_agent.ipynb     # ReAct agent with 10 practice problems
 ```
 
 ## File Structure
@@ -102,50 +108,98 @@ notebooks/        # Problem-based exercises (✅ STUDENT VERSION)
 ```
 invest-with-langgraph/
 ├── idris/Domain/
-│   ├── InvestmentAgent.idr    # Agent state & evaluation spec
-│   ├── Workflow.idr            # LangGraph workflow spec
-│   ├── Tools.idr               # Tool framework spec
-│   └── ReActAgent.idr          # ReAct pattern spec
+│   ├── InvestmentAgent.idr      # Agent state & evaluation spec
+│   ├── Workflow.idr              # LangGraph workflow spec
+│   ├── Tools.idr                 # Tool framework spec
+│   ├── ReActAgent.idr            # ReAct pattern spec
+│   ├── NotebookStructure.idr     # Notebook cell ordering spec (COMPILED ✅)
+│   └── CellAssociation.idr       # Explanation-code association spec (COMPILED ✅)
 ├── python/
 │   ├── models/
-│   │   └── tools.py            # Investment analysis tools implementation
+│   │   └── tools.py              # Investment analysis tools implementation
 │   └── utils/
-│       └── reorder_notebooks.py # Utility: reorder notebook cells (explanation before code)
+│       ├── README.md             # Utils documentation
+│       ├── reorder_with_associations.py  # Association-based reordering (ACTIVE ✅)
+│       └── visualize_associations.py     # Association visualization
 ├── notebooks/
-│   ├── 1_generate.ipynb        # Basic: query → answer (3 practice problems)
-│   ├── 2_web_search.ipynb      # Advanced: eval loop + web search (10 practice problems)
-│   └── 3_tool_agent.ipynb      # ReAct agent with tools (10 practice problems)
-├── .env                         # API keys (OPENAI_API_KEY, TAVILY_API_KEY)
-├── pyproject.toml               # uv-based dependencies (Python ≥3.13)
-├── uv.lock                      # uv locked versions
-├── spec.yaml                    # Project specification
-└── CLAUDE.md                    # This file
+│   ├── 1_generate.ipynb          # Basic: query → answer (3 practice problems)
+│   ├── 2_web_search.ipynb        # Advanced: eval loop + web search (10 practice problems)
+│   └── 3_tool_agent.ipynb        # ReAct agent with tools (10 practice problems)
+├── .env                           # API keys (OPENAI_API_KEY, TAVILY_API_KEY)
+├── pyproject.toml                 # uv-based dependencies (Python ≥3.13)
+├── uv.lock                        # uv locked versions
+├── spec.yaml                      # Project specification
+└── CLAUDE.md                      # This file
 ```
 
 ## Utilities
 
-### Notebook Cell Reordering
+See [python/utils/README.md](python/utils/README.md) for detailed documentation.
 
-**Location**: `python/utils/reorder_notebooks.py`
+### 1. Association-Based Notebook Reordering
 
-**Purpose**: Reorders notebook cells to place explanation markdown cells before code cells for better student learning experience.
+**Location**: `python/utils/reorder_with_associations.py`
+**Idris Spec**: `idris/Domain/CellAssociation.idr` ✅ COMPILED
+
+**Purpose**: Reorder notebooks 1 & 2 using explicit explanation-code associations defined in Idris specification.
 
 **Usage**:
 ```bash
-python3 python/utils/reorder_notebooks.py
+python3 python/utils/reorder_with_associations.py
 ```
 
-**What it does**:
-- Scans all notebooks in `notebooks/` directory
-- Finds code cells followed by markdown explanation cells (starting with `##`)
-- Swaps them so explanation comes before code
-- Current structure: `code → explanation` → Target: `explanation → code`
-- Helps students understand the concept before seeing implementation
+**How it works**:
+1. Reads association maps from Idris `CellAssociation.idr`
+2. Validates: no duplicate indices, all indices in range
+3. For each association (sorted order):
+   - Output explanation cell
+   - Output associated code cells
+4. Output any unassociated cells at end
 
-**When to use**:
-- After adding new explanation cells to notebooks
-- When creating new educational notebooks
-- To ensure consistent learning flow across all notebooks
+**Association Maps**:
+- Notebook 1: 12 associations (intro + 10 sections + practice)
+- Notebook 2: 11 associations (10 sections + practice)
+
+**Example**:
+```
+Original: [설명1, 설명2, ..., 설명10, 코드1, 코드2, ..., 코드10]
+Result:   [설명1, 코드1, 설명2, 코드2, ..., 설명10, 코드10]
+```
+
+### 2. Association Visualization
+
+**Location**: `python/utils/visualize_associations.py`
+
+**Purpose**: Visualize explanation → code mappings for debugging and verification.
+
+**Usage**:
+```bash
+python3 python/utils/visualize_associations.py
+```
+
+**Output**:
+```
+📝 Cell 2: ## 1. 환경 변수 로드
+   └─> 코드 셀: Cell 13: from dotenv import load_dotenv
+...
+📊 Summary: 12 associations, 15 code cells
+```
+
+### Idris-First Development Example
+
+This notebook reordering feature demonstrates the complete Idris-first workflow:
+
+1. **Problem**: Notebooks 1 & 2 have all explanations before all code (bad structure)
+2. **Investigation**: Analyzed cell structure, created keyword-based mappings
+3. **Idris Spec**: Defined `Association`, `AssociationMap`, `ValidAssociationMap` types
+4. **Validation**: Added duplicate detection, range checks
+5. **Concrete Data**: Included actual association maps in Idris spec
+6. **Compilation**: `idris2 --check CellAssociation.idr` ✅
+7. **Python Implementation**: Translated Idris spec to Python
+8. **Debugging**: Found duplicates → fixed Idris → recompiled → updated Python
+9. **Result**: Perfect explanation → code pairing
+
+**Key Insight**: Idris specification acted as single source of truth. All bugs were caught and fixed at specification level before runtime.
 
 ## Key Implementation Details
 
@@ -206,11 +260,15 @@ initial_state = {
 ## Gap Analysis (Current vs. spec.yaml)
 
 **Completed**:
-- ✅ Idris specifications (all 4 files compiled successfully)
+- ✅ Idris specifications (6 files compiled successfully)
+  - InvestmentAgent.idr, Workflow.idr, Tools.idr, ReActAgent.idr
+  - NotebookStructure.idr, CellAssociation.idr (new!)
 - ✅ Tool-based architecture (4 investment tools: search_web, get_stock_price, calculate_moving_average, get_company_info)
 - ✅ Python models matching Idris specs (`python/models/tools.py`)
+- ✅ Python utilities with Idris specs (`python/utils/`)
 - ✅ Student practice exercises (10 progressive fill-in-the-blank problems in notebook 3)
 - ✅ Migration to uv package manager (poetry.lock removed)
+- ✅ Notebook cell ordering (explanation → code pairs for all notebooks)
 
 **Missing Components**:
 - Test suite (`python/tests/`)
@@ -223,3 +281,9 @@ initial_state = {
 2. Set up GitHub Project board for student progress tracking
 3. Consider splitting notebooks into exercise/solution pairs
 4. Update version to 1.0.0 if ready for release
+
+**Recent Achievement**:
+Successfully demonstrated Idris-first methodology with notebook reordering:
+- Problem identified → Idris spec written → Compiled → Python implemented
+- Bugs caught at specification level (duplicate cell indices)
+- Result: Perfect explanation-code pairing in all notebooks
